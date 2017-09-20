@@ -1,4 +1,4 @@
- export const api = " https://rocky-beyond-20312.herokuapp.com"
+ export const api = "https://rocky-beyond-20312.herokuapp.com"
 
 export const headers = {
   'Accept': 'application/json',

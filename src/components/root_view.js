@@ -9,7 +9,7 @@ import moment from 'moment';
 import sortBy from "sort-by";
 import Vote from './vote';
 import AddSort from './add_sort';
-import { Container, Grid, Header, Segment, List, Dropdown } from 'semantic-ui-react';
+import { Container, Grid, Header, Image, Segment, List, Dropdown } from 'semantic-ui-react';
 import { RenderLogoEntry } from '../util/Utils'
 class RootView extends Component {
 
@@ -34,48 +34,37 @@ class RootView extends Component {
 
 
   render() {
-    const {posts, comments, sortField, options, category} = this.props;
+    const {posts, comments, sortField, options, category, menus} = this.props;
 
     return (
       <Container>
         <Header >
           <Link to={'/'}>
-            <h2>Post View</h2>
+            <h1>Taqueria Los Lira</h1>
           </Link>
-          <List horizontal>
-              <List.Item>
-                <AddSort addPost={this.onClickAddPost.bind(this)} toggleSort={this.onClickToggleSort.bind(this)} sortField={sortField}/>
-              </List.Item>
-              <List.Item>
-                <Dropdown selection text={`Category : ${category}`} defaultValue={category} onChange={this.onChangeCategory.bind(this)} options={options}/>
-              </List.Item>
-          </List>
         </Header>
         <Segment attached>
           <List divided relaxed>
-            {posts.map( (post) => (
-            <List.Item key={post.id}>
+            {menus.map( (menu) => (
+            <List.Item key={menu.id}>
                 <Container>
                     <Grid columns='equal' padded={false}>
                       <Grid.Row>
                         <Grid.Column>
-                          <Link to={`/${post.category}/${post.id}`}>
-                            <h3>{post.title}</h3>
-                          </Link>
+                           <h3>{menu.name}</h3>
+                        </Grid.Column>
+                        <Grid.Column textAlign='right'>
+                           {menu.price}
+                        </Grid.Column>
+                      </Grid.Row>
+                      <Grid.Row>
+                        <Grid.Column>
+                           <h4>{menu.description}</h4>
                         </Grid.Column>
                       </Grid.Row> 
                       <Grid.Row>
-                        <Grid.Column>
-                          <small>{moment(parseInt(post.timestamp,10)).calendar()}</small>
-                        </Grid.Column>                    
-                        <Grid.Column>
-                          <small>Comments ({comments[post.id] ? comments[post.id].length : 0})</small>
-                        </Grid.Column> 
-                        <Grid.Column>
-                          <RenderLogoEntry name={post.category}/>
-                        </Grid.Column> 
                         <Grid.Column width={10} textAlign='right'>
-                          <Vote id={post.id}  type={"posts"} voteScore={post.voteScore} />
+                          <Image src={`/assets/images/${menu.image}`}/>
                         </Grid.Column>
                       </Grid.Row>
                     </Grid>
@@ -87,13 +76,13 @@ class RootView extends Component {
    );
   }
 }
-function mapStateToProps({posts, comments, categories, sortCriteria }, {match : {params : {category}}}) {
+function mapStateToProps({posts, comments, categories, menus, sortCriteria }, {match : {params : {category}}}) {
  const sortField = sortCriteria.posts;
  const options = categories.concat({key : 'all' , value: 'all', text : 'all'});
  category = typeof category === 'undefined' ? 'all' : category;
  const filteredPost =  _.values(posts)
                         .filter((post) =>  category === 'all' ? true : post.category === category )
                         .sort(sortBy(sortField));
- return { posts : filteredPost , comments, sortField , options, category};
+ return { posts : filteredPost , comments, sortField , options, category, menus};
 }
 export default connect(mapStateToProps,{ toggleSortPosts, deletePost, getCategories })(RootView);

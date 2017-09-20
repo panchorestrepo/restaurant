@@ -15,4 +15,5 @@ export const DELETE_COMMENT = 'delete_comment';
 export const EDIT_COMMENT = 'edit_comment';
 export const INIT_COMMENTS = 'init_comments';
 export const CONFIRMATION_STATUS = 'confirmation_status';
-
+// Restuarant starts here
+export const GET_MENUS = 'menus';

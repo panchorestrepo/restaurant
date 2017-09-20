@@ -13,6 +13,7 @@ import NotFound from './components/not_found';
 import registerServiceWorker from './registerServiceWorker';
 import { fetchPosts } from './actions/posts';
 import getCategories from './actions/categories'
+import getMenus from './actions/menus'
 
 //const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 
@@ -23,6 +24,8 @@ const store = createStore(
 console.log('index.js before dispatch',store.getState());
 store.dispatch(fetchPosts());
 store.dispatch(getCategories());
+store.dispatch(getMenus());
+console.log('index.js after dispatch',store.getState());
 
 ReactDOM.render(
     <Provider store={store}>

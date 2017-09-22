@@ -1,7 +1,7 @@
-import { GET_MENUS } from './types'
+import { GET_MENUS, ADD_ITEM } from './types'
 import { api, headers} from './api_info';
 
-export default function getMenus() { 
+export function getMenus() { 
     return (dispatch) => {
       fetch(`${api}/menus`, { headers })
         .then(res => res.json())
@@ -11,4 +11,11 @@ export default function getMenus() {
           payload : menus        
         }));
       }
+  }
+
+export function addItem(item) {
+    return {
+      type : ADD_ITEM,
+      payload : item
+    }
   }

@@ -2,24 +2,20 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { deletePost } from '../actions/posts';
-import { toggleSortPosts } from '../actions/toggleSort';
-import getCategories from '../actions/categories'
 import moment from 'moment';
 import sortBy from "sort-by";
-import Vote from './vote';
-import AddSort from './add_sort';
-import { Container, Grid, Header, Image, Segment, List, Dropdown } from 'semantic-ui-react';
-import { RenderLogoEntry } from '../util/Utils'
+import { Container, Grid, Button, Header, Image, Segment, List } from 'semantic-ui-react';
+import { addItem } from '../actions/menus'
+
 class RootView extends Component {
 
   onClickToggleSort() {
     this.props.toggleSortPosts();
   }
 
-  onClickAddPost() {
-    const category = this.props.category;
-    this.props.history.push(`/posts/category/${category}`);
+  onClickAddItem(menu) {
+    console.log('onClickAddItem menu',menu);
+    this.props.addItem(menu);
   }
   onDeleteClick(post) {
       const { id } = post;
@@ -34,7 +30,7 @@ class RootView extends Component {
 
 
   render() {
-    const {posts, comments, sortField, options, category, menus} = this.props;
+    const { menus, shoppingCart} = this.props;
 
     return (
       <Container>
@@ -42,6 +38,7 @@ class RootView extends Component {
           <Link to={'/'}>
             <h1>Taqueria Los Lira</h1>
           </Link>
+          Total Orden : ${typeof shoppingCart.totalOrden === 'undefined' ? 0 : shoppingCart.totalOrden } Tax : {typeof shoppingCart.totalOrden === 'undefined' ? 0 : shoppingCart.totalOrden*0.0825}
         </Header>
         <Segment attached>
           <List divided relaxed>
@@ -54,17 +51,23 @@ class RootView extends Component {
                            <h3>{menu.name}</h3>
                         </Grid.Column>
                         <Grid.Column textAlign='right'>
-                           {menu.price}
+                           ${menu.price}
                         </Grid.Column>
                       </Grid.Row>
                       <Grid.Row>
                         <Grid.Column>
                            <h4>{menu.description}</h4>
                         </Grid.Column>
+                        <Grid.Column textAlign='right'>
+                           <Button onClick={() => this.onClickAddItem(menu)}>Order</Button>
+                        </Grid.Column>                        
                       </Grid.Row> 
                       <Grid.Row>
-                        <Grid.Column width={10} textAlign='right'>
+                        <Grid.Column width={10} >
                           <Image src={`/assets/images/${menu.image}`}/>
+                        </Grid.Column>
+                        <Grid.Column width={6} textAlign='right'>
+                          Cantidad : {typeof shoppingCart[menu.id] === 'undefined' ? 0 : shoppingCart[menu.id].qty}
                         </Grid.Column>
                       </Grid.Row>
                     </Grid>
@@ -76,13 +79,9 @@ class RootView extends Component {
    );
   }
 }
-function mapStateToProps({posts, comments, categories, menus, sortCriteria }, {match : {params : {category}}}) {
- const sortField = sortCriteria.posts;
- const options = categories.concat({key : 'all' , value: 'all', text : 'all'});
- category = typeof category === 'undefined' ? 'all' : category;
- const filteredPost =  _.values(posts)
-                        .filter((post) =>  category === 'all' ? true : post.category === category )
-                        .sort(sortBy(sortField));
- return { posts : filteredPost , comments, sortField , options, category, menus};
+function mapStateToProps({ menus, shoppingCart }) {
+ console.log('shoppingCart',shoppingCart);
+
+ return { menus , shoppingCart};
 }
-export default connect(mapStateToProps,{ toggleSortPosts, deletePost, getCategories })(RootView);
+export default connect(mapStateToProps,{addItem})(RootView);

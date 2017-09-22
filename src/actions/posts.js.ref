@@ -1,4 +1,4 @@
-import { CREATE_POST, DELETE_POST, EDIT_POST, FETCH_POSTS, FETCH_COMMENTS, INIT_COMMENTS } from './types';
+import { CREATE_POST, DELETE_POST, EDIT_POST, FETCH_POSTS } from './types';
 import {api, headers } from './api_info';
 
 export function createPost(values) {
@@ -50,18 +50,47 @@ export function editPost(post) {
   }
 }
 
+// export function fetchPosts() {
+//   console.log('fetchPosts started');
+//   return (dispatch, getState) => {
+//           fetch(`${api}/posts`, { headers })
+//             .then(res => res.json())
+//             .then(response => dispatch( dispatchFetchPosts(response)))
+//             .then(response => {
+//               console.log("getState comments",response.payload);
+//               getComments(dispatch,response.payload,0);
+//             });
+//   }
+// }
+
 export function fetchPosts() {
-  console.log('fetchPosts started');
-  return (dispatch, getState) => {
-          fetch(`${api}/posts`, { headers })
-            .then(res => res.json())
-            .then(response => dispatch( dispatchFetchPosts(response)))
-            .then(response => {
-              console.log("getState comments",response.payload);
-              getComments(dispatch,response.payload,0);
-            });
+  return (dispatch) => {
+    fetch(`${api}/posts`, { headers })
+      .then(res => res.json())
+      .then( posts => Promise.all( 
+        posts.map( post =>  
+         getComment(dispatch,post.id)
+         .then( comments => 
+            post.comments = comments
+         )
+         .then(() => post)
+        )
+      ))
+      // .then( (posts) => dispatch({ type: FETCH_POSTS, posts }))
+      .then( (posts) => console.log('posts',posts))
+      
   }
 }
+
+function getComment(dispatch,parentId) {
+    console.log('parentId',parentId)
+    
+    return fetch(`${api}/posts/${parentId}/comments`, { headers })
+      .then(res => res.json())
+
+}
+
+
 
 function dispatchFetchPosts(response) {
   return {

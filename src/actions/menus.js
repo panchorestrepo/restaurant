@@ -1,4 +1,4 @@
-import { GET_MENUS, ADD_ITEM } from './types'
+import { CHECKOUT, CHECKIN, GET_MENUS, ADD_ITEM, EMPTY_CART } from './types'
 import { api, headers} from './api_info';
 
 export function getMenus() { 
@@ -18,4 +18,33 @@ export function addItem(item) {
       type : ADD_ITEM,
       payload : item
     }
+}
+
+export function placeOrder(order) {
+  return (dispatch) => {
+    fetch(`${api}/checkout`, {
+        method: 'POST',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify( order )
+      })
+      .then(response => response.json())
+      .then((response) => dispatch({
+        type: CHECKOUT,
+        payload : response
+
+      }))
   }
+}
+export function emptyCart() {
+    return {
+      type : EMPTY_CART
+    }
+}
+export function checking() {
+  return {
+    type : CHECKIN
+  }
+}

@@ -1,20 +1,23 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import RootView from './components/root_view';
-import { createStore, applyMiddleware } from 'redux'
+import { createStore, applyMiddleware, compose } from 'redux'
 import reducer from './reducers/index'
 import { Provider } from 'react-redux'
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import ReduxThunk from 'redux-thunk';
 import NotFound from './components/not_found';
+import CheckOut from './components/checkout';
 import registerServiceWorker from './registerServiceWorker';
 import { getMenus } from './actions/menus'
 
-//const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 
 const store = createStore(
     reducer,
+    composeEnhancers(
     applyMiddleware(ReduxThunk)
+    )
 );
 console.log('index.js before dispatch',store.getState());
 store.dispatch(getMenus());
@@ -24,6 +27,7 @@ ReactDOM.render(
         <BrowserRouter>
             <div>
                 <Switch>
+                    <Route path='/checkout' component={CheckOut}/>
                     <Route path='/' component={RootView}/>
                     <Route component={NotFound}/>
                 </Switch>

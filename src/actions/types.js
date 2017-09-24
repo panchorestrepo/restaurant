@@ -9,3 +9,6 @@ export const VOTE_POST = "vote_posts";
 // Restuarant starts here
 export const ADD_ITEM = "add_item";
 export const GET_MENUS = 'menus';
+export const CHECKOUT = 'checkout';
+export const CHECKIN = 'checkin';
+export const EMPTY_CART = 'empty_cart';
